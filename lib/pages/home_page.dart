@@ -22,6 +22,9 @@ class _HomePageState extends State<HomePage> {
     await _getCurrentLocation();
 
     if (locationData == null) {
+      setState(() {
+        shouldDisplayMissingLocationError = true;
+      });
       return;
     }
 
@@ -31,12 +34,11 @@ class _HomePageState extends State<HomePage> {
     if (latitude == null || longitude == null) {
       return;
     }
-
     Future<http.Response> weatherResponse = http.get(Uri.parse(
         "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=91470720125fda0472f742a696a931da"));
 
     http.Response response = await weatherResponse;
-    
+
     if (response.statusCode == 200) {
       var weres = WeatherResponse.fromJson(jsonDecode(response.body));
 
@@ -64,7 +66,6 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             shouldDisplayMissingLocationError = true;
           });
-          print(shouldDisplayMissingLocationError.toString());
           return;
         }
       }
@@ -90,24 +91,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _getWeatherInformation();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 236, 231, 231),
-      appBar: AppBar(
-        title:
-            const Text("WeatherApp.io", style: TextStyle(color: Colors.grey)),
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 56, 56, 56),
-      ),
-      body: Center(
-        child: weatherData == null ? 
-          (shouldDisplayMissingLocationError
-            ? const Text("Error: no location permission given.")
-            : ElevatedButton(
-                onPressed: _getWeatherInformation,
-                child: const Text("Get weather information"),
-              ))
-               :  WeatherCard(weatherData: weatherData as WeatherResponse),
-    ));
+        appBar: AppBar(
+          title:
+              const Text("WeatherApp.io", style: TextStyle(color: Colors.grey)),
+          centerTitle: true,
+          backgroundColor: const Color.fromARGB(255, 56, 56, 56),
+        ),
+        body: Center(
+          child: weatherData == null
+              ? (shouldDisplayMissingLocationError
+                  ? const Text("Error: no location permission given.")
+                  : const CircularProgressIndicator())
+              : WeatherCard(weatherData: weatherData as WeatherResponse),
+        ));
   }
 }
