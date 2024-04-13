@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,12 +14,12 @@ class _LoginPageState extends State<LoginPage> {
 
   final String companyName = "WeatherApp.io";
 
-    void login() {
-      //the user should not be able to return to the login screen after logging in
-      Navigator.of(context).pushReplacementNamed('/home');
+  void login() {
+    //the user should not be able to return to the login screen after logging in
+    Navigator.of(context).pushReplacementNamed('/home');
   }
 
-  void validateLoginCredentials() {
+  void handleLogin() {
     String email = emailController.text;
     String password = passwordController.text;
 
@@ -57,11 +58,16 @@ class _LoginPageState extends State<LoginPage> {
               child: Text(
                 companyName,
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 48,
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              
+              
             ),
+            SvgPicture.network("https://www.ollyolly.com/wp-content/themes/olly-olly/resources/images/logo.svg",
+             width: 80,
+             height: 80),
             Column(
               children: [
                 Padding(
@@ -70,6 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: 400,
                     child: TextField(
                       controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
                         hintText: "The correct email is user@gmail.com",
                         labelText: 'Email',
@@ -87,9 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: const InputDecoration(
                           labelText: 'Password',
                           hintText: "The correct password is 12345",
-                          border: OutlineInputBorder()
-
-                         ),
+                          border: OutlineInputBorder()),
                     ),
                   ),
                 ),
@@ -98,11 +103,13 @@ class _LoginPageState extends State<LoginPage> {
                   child: SizedBox(
                     width: 400,
                     child: ElevatedButton(
-                      onPressed: validateLoginCredentials,
-                      child: const Text('Login'),
+                      onPressed: handleLogin,
+                      child: const Text('Login',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
-                ),
+                )
               ],
             ),
           ],
